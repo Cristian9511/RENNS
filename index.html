@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/PostalNumbersStatistic_1.js"></script>
+        <script src="data/CountryBoundary_2.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[43.30000556544329,17.684976690641882],[48.47980035057618,32.29709544957831]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            map.setMaxBounds(map.getBounds());
+        }
+        map.createPane('pane_ESRIGraydark_0');
+        map.getPane('pane_ESRIGraydark_0').style.zIndex = 400;
+        var layer_ESRIGraydark_0 = L.tileLayer('http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            pane: 'pane_ESRIGraydark_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_ESRIGraydark_0;
+        map.addLayer(layer_ESRIGraydark_0);
+        function pop_PostalNumbersStatistic_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">DENUMIRE_D</th>\
+                        <td>' + (feature.properties['DENUMIRE_D'] !== null ? autolinker.link(feature.properties['DENUMIRE_D'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SIRUTA_Res</th>\
+                        <td>' + (feature.properties['SIRUTA_Res'] !== null ? autolinker.link(feature.properties['SIRUTA_Res'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">JUDET_text</th>\
+                        <td>' + (feature.properties['JUDET_text'] !== null ? autolinker.link(feature.properties['JUDET_text'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">STATUT</th>\
+                        <td>' + (feature.properties['STATUT'] !== null ? autolinker.link(feature.properties['STATUT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Strazi</th>\
+                        <td>' + (feature.properties['Strazi'] !== null ? autolinker.link(feature.properties['Strazi'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Numere</th>\
+                        <td>' + (feature.properties['Numere'] !== null ? autolinker.link(feature.properties['Numere'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CLASE</th>\
+                        <td>' + (feature.properties['CLASE'] !== null ? autolinker.link(feature.properties['CLASE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_PostalNumbersStatistic_1_0(feature) {
+            switch(String(feature.properties['CLASE'])) {
+                case '1':
+                    return {
+                pane: 'pane_PostalNumbersStatistic_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2':
+                    return {
+                pane: 'pane_PostalNumbersStatistic_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,255,1,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3':
+                    return {
+                pane: 'pane_PostalNumbersStatistic_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,127,0,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4':
+                    return {
+                pane: 'pane_PostalNumbersStatistic_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(31,120,180,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5':
+                    return {
+                pane: 'pane_PostalNumbersStatistic_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(173,54,196,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '6':
+                    return {
+                pane: 'pane_PostalNumbersStatistic_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(1,255,247,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_PostalNumbersStatistic_1');
+        map.getPane('pane_PostalNumbersStatistic_1').style.zIndex = 401;
+        map.getPane('pane_PostalNumbersStatistic_1').style['mix-blend-mode'] = 'normal';
+        var layer_PostalNumbersStatistic_1 = new L.geoJson(json_PostalNumbersStatistic_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PostalNumbersStatistic_1',
+            layerName: 'layer_PostalNumbersStatistic_1',
+            pane: 'pane_PostalNumbersStatistic_1',
+            onEachFeature: pop_PostalNumbersStatistic_1,
+            style: style_PostalNumbersStatistic_1_0,
+        });
+        bounds_group.addLayer(layer_PostalNumbersStatistic_1);
+        map.addLayer(layer_PostalNumbersStatistic_1);
+        function pop_CountryBoundary_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_0'] !== null ? autolinker.link(feature.properties['ID_0'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ISO'] !== null ? autolinker.link(feature.properties['ISO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_0'] !== null ? autolinker.link(feature.properties['NAME_0'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_1'] !== null ? autolinker.link(feature.properties['ID_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_1'] !== null ? autolinker.link(feature.properties['NAME_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TYPE_1'] !== null ? autolinker.link(feature.properties['TYPE_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ENGTYPE_1'] !== null ? autolinker.link(feature.properties['ENGTYPE_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NL_NAME_1'] !== null ? autolinker.link(feature.properties['NL_NAME_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['VARNAME_1'] !== null ? autolinker.link(feature.properties['VARNAME_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_CountryBoundary_2_0() {
+            return {
+                pane: 'pane_CountryBoundary_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_CountryBoundary_2');
+        map.getPane('pane_CountryBoundary_2').style.zIndex = 402;
+        map.getPane('pane_CountryBoundary_2').style['mix-blend-mode'] = 'normal';
+        var layer_CountryBoundary_2 = new L.geoJson(json_CountryBoundary_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_CountryBoundary_2',
+            layerName: 'layer_CountryBoundary_2',
+            pane: 'pane_CountryBoundary_2',
+            onEachFeature: pop_CountryBoundary_2,
+            style: style_CountryBoundary_2_0,
+        });
+        bounds_group.addLayer(layer_CountryBoundary_2);
+        map.addLayer(layer_CountryBoundary_2);
+            var abstract = new L.Control({'position':'bottomleft'});
+            abstract.onAdd = function (map) {
+                this._div = L.DomUtil.create('div',
+                'leaflet-control abstract');
+                this._div.id = 'abstract'
+
+                    abstract.show();
+                    return this._div;
+                };
+                abstract.show = function () {
+                    this._div.classList.remove("abstract");
+                    this._div.classList.add("abstractUncollapsed");
+                    this._div.innerHTML = 'This is a web map deisgned in march 2023 to show the actual progress that has been made by Romania at national level in regards with alocating numbers and name to the streets';
+            };
+            abstract.addTo(map);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/CountryBoundary_2.png" /> Country Boundary': layer_CountryBoundary_2,'Postal Numbers Statistic<br /><table><tr><td style="text-align: center;"><img src="legend/PostalNumbersStatistic_1_00.png" /></td><td>0</td></tr><tr><td style="text-align: center;"><img src="legend/PostalNumbersStatistic_1_130001.png" /></td><td>1 - 3000</td></tr><tr><td style="text-align: center;"><img src="legend/PostalNumbersStatistic_1_300060002.png" /></td><td>3000 - 6000</td></tr><tr><td style="text-align: center;"><img src="legend/PostalNumbersStatistic_1_600090003.png" /></td><td>6000 - 9000</td></tr><tr><td style="text-align: center;"><img src="legend/PostalNumbersStatistic_1_9000200004.png" /></td><td>9000 - 20000</td></tr><tr><td style="text-align: center;"><img src="legend/PostalNumbersStatistic_1_200005.png" /></td><td>>20000</td></tr></table>': layer_PostalNumbersStatistic_1,"ESRI Gray (dark)": layer_ESRIGraydark_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_CountryBoundary_2.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NAME_1'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['NAME_1']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_CountryBoundary_2'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"Numere": "int","Strazi": "int","JUDET_text": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+        var i = 0;
+        layer_CountryBoundary_2.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NAME_1'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['NAME_1']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_CountryBoundary_2'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Numere = document.createElement("div");
+            div_Numere.id = "div_Numere";
+            div_Numere.className = "slider";
+            document.getElementById("menu").appendChild(div_Numere);
+            var lab_Numere = document.createElement('div');
+            lab_Numere.innerHTML  = 'Numere: <span id="val_Numere"></span>';
+            lab_Numere.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_Numere);
+            var reset_Numere = document.createElement('div');
+            reset_Numere.innerHTML = 'clear filter';
+            reset_Numere.className = 'filterlabel';
+            lab_Numere.className = 'filterlabel';
+            reset_Numere.onclick = function() {
+                sel_Numere.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_Numere);
+            var sel_Numere = document.getElementById('div_Numere');
+            noUiSlider.create(sel_Numere, {
+                connect: true,
+                start: [0, 29887],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 0,
+                max: 29887
+                }
+            });
+            sel_Numere.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_Numere = document.getElementById('val_Numere');
+            val_Numere.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Strazi = document.createElement("div");
+            div_Strazi.id = "div_Strazi";
+            div_Strazi.className = "slider";
+            document.getElementById("menu").appendChild(div_Strazi);
+            var lab_Strazi = document.createElement('div');
+            lab_Strazi.innerHTML  = 'Strazi: <span id="val_Strazi"></span>';
+            lab_Strazi.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_Strazi);
+            var reset_Strazi = document.createElement('div');
+            reset_Strazi.innerHTML = 'clear filter';
+            reset_Strazi.className = 'filterlabel';
+            lab_Strazi.className = 'filterlabel';
+            reset_Strazi.onclick = function() {
+                sel_Strazi.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_Strazi);
+            var sel_Strazi = document.getElementById('div_Strazi');
+            noUiSlider.create(sel_Strazi, {
+                connect: true,
+                start: [0, 3135],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 0,
+                max: 3135
+                }
+            });
+            sel_Strazi.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_Strazi = document.getElementById('val_Strazi');
+            val_Strazi.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_JUDET_text = document.createElement('div');
+            div_JUDET_text.id = "div_JUDET_text";
+            div_JUDET_text.className= "filterselect";
+            document.getElementById("menu").appendChild(div_JUDET_text);
+            sel_JUDET_text = document.createElement('select');
+            sel_JUDET_text.multiple = true;
+            sel_JUDET_text.size = 10;
+            sel_JUDET_text.id = "sel_JUDET_text";
+            var JUDET_text_options_str = "<option value='' unselected></option>";
+            sel_JUDET_text.onchange = function(){filterFunc()};
+            JUDET_text_options_str  += '<option value="ALBA">ALBA</option>';
+            JUDET_text_options_str  += '<option value="ARAD">ARAD</option>';
+            JUDET_text_options_str  += '<option value="ARGEŞ">ARGEŞ</option>';
+            JUDET_text_options_str  += '<option value="BACĂU">BACĂU</option>';
+            JUDET_text_options_str  += '<option value="BIHOR">BIHOR</option>';
+            JUDET_text_options_str  += '<option value="BISTRIŢA-NĂSĂUD">BISTRIŢA-NĂSĂUD</option>';
+            JUDET_text_options_str  += '<option value="BOTOŞANI">BOTOŞANI</option>';
+            JUDET_text_options_str  += '<option value="BRAŞOV">BRAŞOV</option>';
+            JUDET_text_options_str  += '<option value="BRĂILA">BRĂILA</option>';
+            JUDET_text_options_str  += '<option value="BUCUREŞTI">BUCUREŞTI</option>';
+            JUDET_text_options_str  += '<option value="BUZĂU">BUZĂU</option>';
+            JUDET_text_options_str  += '<option value="CARAŞ-SEVERIN">CARAŞ-SEVERIN</option>';
+            JUDET_text_options_str  += '<option value="CLUJ">CLUJ</option>';
+            JUDET_text_options_str  += '<option value="CONSTANŢA">CONSTANŢA</option>';
+            JUDET_text_options_str  += '<option value="COVASNA">COVASNA</option>';
+            JUDET_text_options_str  += '<option value="CĂLĂRAŞI">CĂLĂRAŞI</option>';
+            JUDET_text_options_str  += '<option value="DOLJ">DOLJ</option>';
+            JUDET_text_options_str  += '<option value="DÂMBOVIŢA">DÂMBOVIŢA</option>';
+            JUDET_text_options_str  += '<option value="GALAŢI">GALAŢI</option>';
+            JUDET_text_options_str  += '<option value="GIURGIU">GIURGIU</option>';
+            JUDET_text_options_str  += '<option value="GORJ">GORJ</option>';
+            JUDET_text_options_str  += '<option value="HARGHITA">HARGHITA</option>';
+            JUDET_text_options_str  += '<option value="HUNEDOARA">HUNEDOARA</option>';
+            JUDET_text_options_str  += '<option value="IALOMIŢA">IALOMIŢA</option>';
+            JUDET_text_options_str  += '<option value="IAŞI">IAŞI</option>';
+            JUDET_text_options_str  += '<option value="ILFOV">ILFOV</option>';
+            JUDET_text_options_str  += '<option value="MARAMUREŞ">MARAMUREŞ</option>';
+            JUDET_text_options_str  += '<option value="MEHEDINŢI">MEHEDINŢI</option>';
+            JUDET_text_options_str  += '<option value="MUREŞ">MUREŞ</option>';
+            JUDET_text_options_str  += '<option value="NEAMŢ">NEAMŢ</option>';
+            JUDET_text_options_str  += '<option value="OLT">OLT</option>';
+            JUDET_text_options_str  += '<option value="PRAHOVA">PRAHOVA</option>';
+            JUDET_text_options_str  += '<option value="SATU-MARE">SATU-MARE</option>';
+            JUDET_text_options_str  += '<option value="SIBIU">SIBIU</option>';
+            JUDET_text_options_str  += '<option value="SUCEAVA">SUCEAVA</option>';
+            JUDET_text_options_str  += '<option value="SĂLAJ">SĂLAJ</option>';
+            JUDET_text_options_str  += '<option value="TELEORMAN">TELEORMAN</option>';
+            JUDET_text_options_str  += '<option value="TIMIŞ">TIMIŞ</option>';
+            JUDET_text_options_str  += '<option value="TULCEA">TULCEA</option>';
+            JUDET_text_options_str  += '<option value="VASLUI">VASLUI</option>';
+            JUDET_text_options_str  += '<option value="VRANCEA">VRANCEA</option>';
+            JUDET_text_options_str  += '<option value="VÂLCEA">VÂLCEA</option>';
+            sel_JUDET_text.innerHTML = JUDET_text_options_str;
+            div_JUDET_text.appendChild(sel_JUDET_text);
+            var lab_JUDET_text = document.createElement('div');
+            lab_JUDET_text.innerHTML = 'JUDET_text';
+            lab_JUDET_text.className = 'filterlabel';
+            div_JUDET_text.appendChild(lab_JUDET_text);
+            var reset_JUDET_text = document.createElement('div');
+            reset_JUDET_text.innerHTML = 'clear filter';
+            reset_JUDET_text.className = 'filterlabel';
+            reset_JUDET_text.onclick = function() {
+                var options = document.getElementById("sel_JUDET_text").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_JUDET_text.appendChild(reset_JUDET_text);
+        resetLabels([layer_PostalNumbersStatistic_1,layer_CountryBoundary_2]);
+        map.on("zoomend", function(){
+            resetLabels([layer_PostalNumbersStatistic_1,layer_CountryBoundary_2]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_PostalNumbersStatistic_1,layer_CountryBoundary_2]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_PostalNumbersStatistic_1,layer_CountryBoundary_2]);
+        });
+        </script>
+    </body>
+</html>
