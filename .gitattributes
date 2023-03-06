@@ -1,0 +1,2 @@
+*.js filter=lfs diff=lfs merge=lfs -text
+* annex.largefiles=(largerthan)100MB
